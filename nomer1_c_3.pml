@@ -1,4 +1,4 @@
-#define N	10	/*Number of Proc*/
+#define N	5	/*Number of Proc*/
 
 short flag[N]={0};
 int nCrit = 0;
@@ -84,7 +84,9 @@ active [N] proctype p(){
 							fi
 						}
 				od;
+			/*BEGINING OF CRITICAL SECTION*/
 			l10: nCrit++; assert(nCrit == 1); nCrit--;
+			/*END OF CRITICAL SECTION*/
 			l11:	do
 						::true ->
 							atomic{
@@ -105,6 +107,7 @@ active [N] proctype p(){
 							}
 					od
 			l12: atomic{
+				/* Assertion */
 				int j;
 				for(j : 0 .. N-1){
 					if
@@ -113,6 +116,7 @@ active [N] proctype p(){
 						:: else -> skip;
 					fi;
 				}
+
 				flag[_pid] = 0;
 			}
 	od

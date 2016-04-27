@@ -1,4 +1,4 @@
-#define N	3	/*Number of Proc*/
+#define N	5	/*Number of Proc*/
 
 short flag[N]={0};
 int nCrit = 0;
@@ -84,20 +84,26 @@ active [N] proctype p(){
 							fi
 						}
 				od;
+			/*BEGINING OF CRITICAL SECTION*/
 			l10: atomic{
-				nCrit++; assert(nCrit == 1); nCrit--;
+				/* Assertion */
 				int j;
 				for(j : 0 .. _pid-1){
 					assert(!( (p[j]@l5) || (p[j]@l6) || (p[j]@l7) || (p[j]@l8) || (p[j]@l9)));
 				}
-			};
+
+				nCrit++; assert(nCrit == 1); nCrit--;
+			}
+			/*END OF CRITICAL SECTION*/
 			l11:	do
 						::true ->
 							atomic{
+								/* Assertion */
 								int j;
 								for(j : 0 .. _pid-1){
 									assert(!( (p[j]@l5) || (p[j]@l6) || (p[j]@l7) || (p[j]@l8) || (p[j]@l9) || (p[j]@l10) ));
 								}
+
 								int i;
 								bool stop = 1;
 								for(i : _pid+1 .. N-1){
@@ -115,11 +121,13 @@ active [N] proctype p(){
 							}
 					od;
 			l12: atomic{
-				flag[_pid] = 0;
+				/* Assertion */
 				int j;
 				for(j : 0 .. _pid-1){
 					assert(!( (p[j]@l5) || (p[j]@l6) || (p[j]@l7) || (p[j]@l8) || (p[j]@l9) || (p[j]@l10) || (p[j]@l11) ));
 				}
+
+				flag[_pid] = 0;
 			};
 	od
 }

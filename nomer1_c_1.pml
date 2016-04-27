@@ -1,4 +1,4 @@
-#define N	3	/*Number of Proc*/
+#define N	5	/*Number of Proc*/
 
 short flag[N]={0};
 int nCrit = 0;
@@ -74,10 +74,12 @@ active [N] proctype p(){
 			l9:	do
 					::true ->
 						atomic{
+							/* Assert that no other procs at l4*/
 							int j;
 							for(j : 0 .. N-1){
 								assert(!(p[j]@l4));
 							}
+
 							int i;
 							bool stop = 1;
 							for(i : 0 .. _pid-1){
@@ -94,20 +96,26 @@ active [N] proctype p(){
 							fi
 						}
 				od;
+			/*BEGINING OF CRITICAL SECTION*/
 			l10: atomic{
-				nCrit++; assert(nCrit == 1); nCrit--;
+				/* Assert that no other procs at l4*/
 				int j;
 				for(j : 0 .. N-1){
 					assert(!(p[j]@l4));
 				}
+
+				nCrit++; assert(nCrit == 1); nCrit--;
 			}
+			/*END OF CRITICAL SECTION*/
 			l11:	do
 						::true ->
 							atomic{
+								/* Assert that no other procs at l4*/
 								int j;
 								for(j : 0 .. N-1){
 									assert(!(p[j]@l4));
 								}
+
 								int i;
 								bool stop = 1;
 								for(i : _pid+1 .. N-1){
@@ -125,11 +133,13 @@ active [N] proctype p(){
 							}
 					od;
 			l12: atomic{
-				flag[_pid] = 0;
+				/* Assert that no other procs at l4*/
 				int j;
 				for(j : 0 .. N-1){
 					assert(!(p[j]@l4));
 				}
+
+				flag[_pid] = 0;
 			}
 	od
 }

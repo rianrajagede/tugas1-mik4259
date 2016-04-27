@@ -84,7 +84,9 @@ active [N] proctype p(){
 							fi
 						}
 				od;
+			/*BEGINING OF CRITICAL SECTION*/
 			l10: nCrit++; assert(nCrit == 1); nCrit--;
+			/*END OF CRITICAL SECTION*/
 			l11:	do
 						::true ->
 							atomic{
